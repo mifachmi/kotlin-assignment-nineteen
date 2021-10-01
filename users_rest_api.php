@@ -5,6 +5,37 @@ if (function_exists($_GET['function'])) {
     $_GET['function']();
 }
 
+function login_user() 
+{
+    global $connect;
+    if (!empty($_GET['email_user']) && !empty($_GET['password'])) {
+        $my_email = $_GET['email_user'];
+        $my_password = $_GET['password'];
+    }
+
+    $query = "SELECT * FROM users WHERE email_user = '$my_email' AND password = '$my_password'";
+    $result = $connect->query($query);
+
+    if ($result->num_rows > 0) {
+        while ($row = mysqli_fetch_object($result)) {
+            $data[] = $row;
+        }
+        $response = array(
+            'status' => 1,
+            'message' => 'get data succeed',
+            'data' => $data
+        );
+    } else {
+        $response = array(
+            'status' => 0,
+            'message' => 'no data found'
+        );
+    }
+
+    header('Content-Type: application/json');
+    echo json_encode($response);
+}
+
 function get_all_users()
 {
     global $connect;
@@ -23,7 +54,7 @@ function get_all_users()
     echo json_encode($response);
 }
 
-function get_user_with_id()
+function get_user_by_id()
 {
     global $connect;
     if (!empty($_GET['id'])) {
@@ -143,7 +174,7 @@ function update_user()
     echo json_encode($response);
 }
 
-function delete_task()
+function delete_user() 
 {
     global $connect;
     $id = $_GET['id'];
@@ -152,12 +183,12 @@ function delete_task()
     if (mysqli_query($connect, $query)) {
         $response = array(
             'status' => 1,
-            'message' => 'delete data with id = ' . $id . ' succeed'
+            'message' => 'delete user with id = ' . $id . ' succeed'
         );
     } else {
         $response = array(
             'status' => 0,
-            'message' => 'delete data with id = ' .$id. ' failed'
+            'message' => 'delete user with id = ' .$id. ' failed'
         );
     }
 
